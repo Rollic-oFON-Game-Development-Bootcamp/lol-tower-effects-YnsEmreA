@@ -14,6 +14,7 @@ public enum TowerStates
 public class LolTower : MonoBehaviour
 {
     [SerializeField] private Transform towerTop;
+    [SerializeField] private GameObject particleObject;
 
     [ReadOnly] public TowerStates currentState;
 
@@ -119,14 +120,22 @@ public class LolTower : MonoBehaviour
         //State Enter
         float timer = 0f;
         float attackCooldown = 1f;
+        bool isAttack = false;
         while (currentState == TowerStates.AttackMinion)
         {
+            if (!isAttack)
+            {
+                Debug.Log("Attack");
+                isAttack = true;
+                FireEntities(currentTargetMinion.transform);
+            }
             timer += Time.deltaTime;
-
             if (timer >= attackCooldown)
             {
+                isAttack = false;
                 if (currentTargetMinion.GetHit())
                 {
+
                     currentTargetMinion = null;
                     currentState = TowerStates.SeekTarget;
                     continue;
@@ -137,9 +146,11 @@ public class LolTower : MonoBehaviour
             var sqrDistanceToTarget = (currentTargetMinion.transform.position - transform.position).sqrMagnitude;
             if (sqrDistanceToTarget > towerRange * towerRange)
             {
-                currentTargetMinion = null;
-                currentState = TowerStates.SeekTarget;
-                continue;
+                Debug.Log("sqrdistance");
+                
+                //currentTargetMinion = null;
+                //currentState = TowerStates.SeekTarget;
+                //continue;
             }
 
             //State Loop
@@ -154,13 +165,21 @@ public class LolTower : MonoBehaviour
         //State Enter
         float timer = 0f;
         float attackCooldown = 1f;
+        bool isAttack = false;
         while (currentState == TowerStates.AttackEnemy)
         {
+            if (!isAttack)
+            {
+                Debug.Log("Attack");
+                isAttack = true;
+                FireEntities(currentTargetPlayer.transform);
+            }
             //State Loop
             timer += Time.deltaTime;
 
             if (timer >= attackCooldown)
             {
+                 isAttack = false;
                 if (currentTargetPlayer.GetHit())
                 {
                     currentTargetPlayer = null;
@@ -192,5 +211,11 @@ public class LolTower : MonoBehaviour
             currentTargetPlayer = teamPlayer;
             currentState = TowerStates.AttackEnemy;
         }
+    }
+
+    private void FireEntities(Transform targetTransform)
+    {
+        var fireObj = Instantiate(particleObject,transform.position,Quaternion.identity);
+        fireObj.GetComponent<FireObject>().FireEntities(targetTransform);
     }
 }

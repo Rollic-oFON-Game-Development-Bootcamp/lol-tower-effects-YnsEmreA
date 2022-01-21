@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0927949fe2dde8449a839c554f2dd02b, type: 3}
   m_Name: GameSettings
   m_EditorClassIdentifier: 
-  TowerRange: 6
+  TowerRange: 2
+  MinionSpawnCooldown: 5
